@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+
+  <!-- PWA / Homescreen Meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="DayInbox" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#5B6CF9" />
+
+  <title>DayInbox — Your Daily Inbox</title>
+
+  <style>
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── Design tokens ──────────────────────────────────────── */
+    :root {
+      --bg:           #F5F5F7;
+      --surface:      #FFFFFF;
+      --accent:       #5B6CF9;
+      --accent-light: #EEF0FF;
+      --accent-dark:  #4A59D4;
+      --text-1:       #1A1A2E;
+      --text-2:       #6B7280;
+      --text-3:       #9CA3AF;
+      --border:       #E5E7EB;
+      --danger:       #EF4444;
+      --danger-bg:    #FEF2F2;
+      --success:      #10B981;
+      --warning:      #F59E0B;
+
+      --r-sm:  10px;
+      --r-md:  16px;
+      --r-lg:  24px;
+
+      --sh-sm: 0 1px 4px rgba(0,0,0,.07);
+      --sh-md: 0 4px 16px rgba(0,0,0,.09);
+      --sh-lg: 0 8px 32px rgba(0,0,0,.14);
+
+      /* Safe areas (notch / home indicator) */
+      --safe-top:    env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* ─── Base layout ────────────────────────────────────────── */
+    html { height: 100%; }
+
+    body {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+                   'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      max-width: 430px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* ─── Header ─────────────────────────────────────────────── */
+    .header {
+      background: var(--surface);
+      padding: calc(var(--safe-top) + 16px) 20px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      box-shadow: var(--sh-sm);
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .app-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -0.6px;
+    }
+    .app-title span { color: var(--accent); }
+
+    .header-date {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    .notif-icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .2s;
+    }
+    .notif-icon-btn:active { background: #D8DCFF; }
+
+    /* ─── Notification banner ─────────────────────────────────── */
+    .notif-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+      transition: opacity .2s;
+    }
+    .notif-banner:active { opacity: .8; }
+    .notif-banner.hidden  { display: none; }
+    .notif-banner.default { background: #FFF8E7; color: #B45309; }
+    .notif-banner.granted { background: #ECFDF5; color: #065F46; cursor: default; }
+    .notif-banner.denied  { background: var(--danger-bg); color: var(--danger); cursor: default; }
+
+    /* ─── Scroll container ───────────────────────────────────── */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px 14px calc(var(--safe-bottom) + 100px);
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+    .scroll-area { scrollbar-width: none; }
+
+    /* ─── Stats row ──────────────────────────────────────────── */
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .stat-card {
+      flex: 1;
+      background: var(--surface);
+      border-radius: var(--r-md);
+      padding: 12px 8px 10px;
+      text-align: center;
+      box-shadow: var(--sh-sm);
+    }
+    .stat-num  { font-size: 24px; font-weight: 800; line-height: 1; }
+    .stat-lbl  { font-size: 11px; color: var(--text-3); margin-top: 3px; font-weight: 500; }
+
+    /* ─── Test-notification button ───────────────────────────── */
+    .test-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background: transparent;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .15s, border-color .15s;
+    }
+    .test-btn:active { background: var(--bg); border-color: var(--text-3); }
+
+    /* ─── Section label ──────────────────────────────────────── */
+    .section-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: .9px;
+      margin: 14px 2px 8px;
+    }
+
+    /* ─── Empty state ────────────────────────────────────────── */
+    .empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 52px 20px 20px;
+      text-align: center;
+    }
+    .empty-emoji { font-size: 60px; margin-bottom: 14px; opacity: .35; }
+    .empty-title { font-size: 17px; font-weight: 700; color: var(--text-2); }
+    .empty-sub   { font-size: 14px; color: var(--text-3); margin-top: 6px; line-height: 1.5; }
+
+    /* ─── Reminder card ──────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--r-md);
+      padding: 14px 14px 14px 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--sh-sm);
+      position: relative;
+      overflow: hidden;
+      transition: transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+      animation: fadeUp .22s ease both;
+    }
+
+    /* Left accent strip */
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      border-radius: 4px 0 0 4px;
+      background: var(--accent);
+    }
+    .card.done::before    { background: var(--text-3); }
+    .card.overdue::before { background: var(--danger); }
+
+    .card.done { opacity: .55; }
+    .card.done .card-title { text-decoration: line-through; color: var(--text-3); }
+
+    /* Checkbox */
+    .check-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: all .2s;
+    }
+    .check-btn.on {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    .check-btn svg { width: 13px; height: 13px; stroke: white; }
+
+    /* Card body */
+    .card-body { flex: 1; min-width: 0; }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 20px;
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+    .time-badge.late {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+    .overdue-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--danger);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    /* Delete button */
+    .del-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: var(--danger-bg);
+      color: var(--danger);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .15s;
+    }
+    .del-btn:active { background: #FECACA; }
+    .del-btn svg { width: 15px; height: 15px; stroke: var(--danger); }
+
+    /* ─── FAB ────────────────────────────────────────────────── */
+    .fab {
+      position: fixed;
+      bottom: calc(var(--safe-bottom) + 22px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 16px 30px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: -.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 24px rgba(91,108,249,.45);
+      cursor: pointer;
+      z-index: 50;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .15s, box-shadow .15s, background .15s;
+      white-space: nowrap;
+    }
+    .fab:active {
+      background: var(--accent-dark);
+      transform: translateX(-50%) scale(.97);
+      box-shadow: 0 3px 12px rgba(91,108,249,.35);
+    }
+    .fab svg { width: 18px; height: 18px; stroke: white; }
+
+    /* ─── Overlay ────────────────────────────────────────────── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .overlay.on { opacity: 1; pointer-events: all; }
+
+    /* ─── Bottom sheet ───────────────────────────────────────── */
+    .sheet {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(110%);
+      width: 100%;
+      max-width: 430px;
+      background: var(--surface);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+      padding: 12px 20px calc(var(--safe-bottom) + 28px);
+      z-index: 101;
+      transition: transform .32s cubic-bezier(.32,.72,0,1);
+      box-shadow: var(--sh-lg);
+    }
+    .sheet.open { transform: translateX(-50%) translateY(0); }
+
+    .drag-handle {
+      width: 38px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 18px;
+    }
+
+    .sheet-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 20px;
+      letter-spacing: -.4px;
+    }
+
+    .field-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      margin-bottom: 7px;
+    }
+
+    .field-group { margin-bottom: 16px; }
+
+    .inp {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      /* 16px minimum prevents iOS auto-zoom */
+      font-size: 16px;
+      font-family: inherit;
+      color: var(--text-1);
+      background: var(--bg);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color .2s, background .2s;
+    }
+    .inp:focus {
+      border-color: var(--accent);
+      background: white;
+    }
+    .inp::placeholder { color: var(--text-3); }
+
+    /* iOS time input fix */
+    input[type="time"] { -webkit-appearance: none; }
+
+    .save-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--r-md);
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 6px;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .15s, transform .12s;
+    }
+    .save-btn:active {
+      background: var(--accent-dark);
+      transform: scale(.99);
+    }
+
+    /* ─── Toast ──────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      top: calc(var(--safe-top) + 72px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-12px);
+      background: rgba(26,26,46,.92);
+      color: white;
+      padding: 11px 22px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s, transform .25s;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .toast.on {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ─── iOS instruction banner ─────────────────────────────── */
+    .ios-tip {
+      background: var(--accent-light);
+      border-radius: var(--r-sm);
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 12px;
+      line-height: 1.5;
+      display: none;
+    }
+    .ios-tip strong { font-weight: 700; }
+
+    /* ─── Animations ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Desktop preview frame ──────────────────────────────── */
+    @media (min-width: 500px) {
+      body {
+        border-left:  1px solid var(--border);
+        border-right: 1px solid var(--border);
+        box-shadow: var(--sh-lg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <div>
+        <div class="app-title">Day<span>Inbox</span></div>
+        <div class="header-date" id="headerDate"></div>
+      </div>
+      <button class="notif-icon-btn" id="notifBtn" aria-label="Notification settings">🔔</button>
+    </div>
+  </header>
+
+  <!-- ── Notification banner ───────────────────────────────── -->
+  <div class="notif-banner hidden" id="notifBanner" role="button" tabindex="0">
+    <span id="notifIcon">⚠️</span>
+    <span id="notifText">Tap to enable reminder notifications</span>
+  </div>
+
+  <!-- ── Scroll area ───────────────────────────────────────── -->
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- iOS tip (shown if iOS and not installed as PWA) -->
+    <div class="ios-tip" id="iosTip">
+      <strong>📱 iOS Tip:</strong> For reliable push notifications, add this page
+      to your Home Screen via the Share button → "Add to Home Screen".
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="statTotal" style="color:var(--accent)">0</div>
+        <div class="stat-lbl">Total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statPending" style="color:var(--warning)">0</div>
+        <div class="stat-lbl">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statDone" style="color:var(--success)">0</div>
+        <div class="stat-lbl">Done</div>
+      </div>
+    </div>
+
+    <!-- Test notification -->
+    <button class="test-btn" id="testBtn">
+      🧪 Send Test Notification
+    </button>
+
+    <!-- Dynamic list -->
+    <div id="reminderList"></div>
+
+  </div><!-- /scroll-area -->
+
+  <!-- ── FAB ───────────────────────────────────────────────── -->
+  <button class="fab" id="fabBtn" aria-label="Add reminder">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="3"
+         stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5"  y1="12" x2="19" y2="12"/>
+    </svg>
+    Add Reminder
+  </button>
+
+  <!-- ── Overlay ───────────────────────────────────────────── -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ── Bottom sheet ──────────────────────────────────────── -->
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="New Reminder">
+    <div class="drag-handle"></div>
+    <div class="sheet-title">New Reminder</div>
+
+    <div class="field-group">
+      <div class="field-lbl">What to remember?</div>
+      <input id="titleInput" class="inp" type="text"
+             placeholder="e.g. Take medicine, Call mom…"
+             maxlength="80"
+             autocomplete="off" autocorrect="off"
+             autocapitalize="sentences" spellcheck="false" />
+    </div>
+
+    <div class="field-group">
+      <div class="field-lbl">When?</div>
+      <input id="timeInput" class="inp" type="time" />
+    </div>
+
+    <button class="save-btn" id="saveBtn">Save Reminder</button>
+  </div>
+
+  <!-- ── Toast ─────────────────────────────────────────────── -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       JavaScript
+  ══════════════════════════════════════════════════════════ -->
+  <script>
+    'use strict';
+
+    /* ── State ─────────────────────────────────────────────── */
+    let reminders = [];
+    const scheduledIds = {};  // id → setTimeout handle
+
+    /* ── Load ──────────────────────────────────────────────── */
+    try {
+      reminders = JSON.parse(localStorage.getItem('di_reminders') || '[]');
+    } catch (_) { reminders = []; }
+
+    /* ── DOMContentLoaded ──────────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      setHeaderDate();
+      detectIOS();
+      checkNotifStatus();
+      renderAll();
+      scheduleAll();
+      setDefaultTime();
+
+      // Re-check overdue every 60 s
+      setInterval(renderAll, 60_000);
+
+      // Bind UI
+      document.getElementById('fabBtn').addEventListener('click', openSheet);
+      document.getElementById('overlay').addEventListener('click', closeSheet);
+      document.getElementById('saveBtn').addEventListener('click', saveReminder);
+      document.getElementById('notifBtn').addEventListener('click', requestNotif);
+      document.getElementById('notifBanner').addEventListener('click', requestNotif);
+      document.getElementById('testBtn').addEventListener('click', sendTestNotif);
+
+      document.getElementById('titleInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('timeInput').focus();
+      });
+
+      // Prevent double-tap zoom (iOS)
+      let _lastTap = 0;
+      document.addEventListener('touchend', e => {
+        const now = Date.now();
+        if (now - _lastTap < 280) e.preventDefault();
+        _lastTap = now;
+      }, { passive: false });
+    });
+
+    /* ── Header date ───────────────────────────────────────── */
+    function setHeaderDate() {
+      const d = new Date();
+      document.getElementById('headerDate').textContent =
+        d.toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric' });
+    }
+
+    /* ── iOS detection ─────────────────────────────────────── */
+    function detectIOS() {
+      const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                           window.navigator.standalone === true;
+      if (isIOS && !isStandalone) {
+        document.getElementById('iosTip').style.display = 'block';
+      }
+    }
+
+    /* ── Default time (now + 30 min) ───────────────────────── */
+    function setDefaultTime() {
+      const d = new Date(Date.now() + 30 * 60_000);
+      document.getElementById('timeInput').value =
+        `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    /* ────────────────────────────────────────────────────────
+       Notifications
+    ──────────────────────────────────────────────────────── */
+    function checkNotifStatus() {
+      const banner = document.getElementById('notifBanner');
+      const btn    = document.getElementById('notifBtn');
+
+      if (!('Notification' in window)) {
+        banner.className = 'notif-banner denied';
+        document.getElementById('notifIcon').textContent = '🚫';
+        document.getElementById('notifText').textContent =
+          'Notifications not supported in this browser';
+        btn.textContent = '🔕';
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        banner.className = 'notif-banner granted';
+        document.getElementById('notifIcon').textContent = '✅';
+        document.getElementById('notifText').textContent =
+          'Notifications enabled — you\'ll get reminders on time';
+        btn.textContent = '🔔';
+      } else if (Notification.permission === 'denied') {
+        banner.className = 'notif-banner denied';
+        document.getElementById('notifIcon').textContent = '🚫';
+        document.getElementById('notifText').textContent =
+          'Notifications blocked — please enable in browser settings';
+        btn.textContent = '🔕';
+      } else {
+        banner.className = 'notif-banner default';
+        document.getElementById('notifIcon').textContent = '🔔';
+        document.getElementById('notifText').textContent =
+          'Tap to enable reminder notifications';
+        btn.textContent = '🔔';
+      }
+    }
+
+    async function requestNotif() {
+      if (!('Notification' in window)) {
+        showToast('Notifications not supported');
+        return;
+      }
+      if (Notification.permission === 'denied') {
+        showToast('Enable notifications in your browser settings');
+        return;
+      }
+      if (Notification.permission === 'granted') {
+        showToast('✅ Notifications already enabled');
+        return;
+      }
+
+      const perm = await Notification.requestPermission();
+      checkNotifStatus();
+
+      if (perm === 'granted') {
+        showToast('✅ Notifications enabled!');
+        scheduleAll();
+      } else {
+        showToast('Permission not granted');
+      }
+    }
+
+    function pushNotif(title, body, tag) {
+      if (Notification.permission === 'granted') {
+        try {
+          const n = new Notification(title, {
+            body,
+            icon: 'data:image/svg+xml,' + encodeURIComponent(
+              '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+              + '<rect width="100" height="100" rx="22" fill="#5B6CF9"/>'
+              + '<text y="72" x="50" text-anchor="middle" font-size="58" fill="white">📬</text>'
+              + '</svg>'
+            ),
+            tag: tag || 'dayinbox-' + Date.now(),
+            requireInteraction: false,
+            silent: false,
+          });
+          // Auto-close after 6 s
+          setTimeout(() => n.close(), 6000);
+        } catch (_) {
+          showToast('⏰ ' + title);
+        }
+      } else {
+        // Fallback in-app toast when permission not granted
+        showToast('⏰ Reminder: ' + title, 4000);
+      }
+    }
+
+    async function sendTestNotif() {
+      if (Notification.permission !== 'granted') {
+        await requestNotif();
+        if (Notification.permission !== 'granted') return;
+      }
+      pushNotif(
+        '🧪 DayInbox Test',
+        'Notifications are working correctly on this device!',
+        'dayinbox-test'
+      );
+      showToast('Test notification sent!');
+    }
+
+    /* ────────────────────────────────────────────────────────
+       Scheduling
+    ──────────────────────────────────────────────────────── */
+    function scheduleAll() {
+      // Clear existing timers
+      Object.values(scheduledIds).forEach(clearTimeout);
+      for (const k in scheduledIds) delete scheduledIds[k];
+
+      const now = Date.now();
+      reminders.forEach(r => {
+        if (r.done) return;
+        const ms = targetMs(r.time);
+        if (ms <= now) return;         // already passed
+        scheduledIds[r.id] = setTimeout(() => {
+          pushNotif(r.title, 'Scheduled for ' + fmtTime(r.time), 'di-' + r.id);
+          renderAll();
+        }, ms - now);
+      });
+    }
+
+    /** Returns the next occurrence of HH:MM as a Unix timestamp (today only) */
+    function targetMs(hhmm) {
+      const [h, m] = hhmm.split(':').map(Number);
+      const d = new Date();
+      d.setHours(h, m, 0, 0);
+      return d.getTime();
+    }
+
+    /* ────────────────────────────────────────────────────────
+       Sheet open / close
+    ──────────────────────────────────────────────────────── */
+    function openSheet() {
+      document.getElementById('sheet').classList.add('open');
+      document.getElementById('overlay').classList.add('on');
+      setTimeout(() => document.getElementById('titleInput').focus(), 350);
+    }
+
+    function closeSheet() {
+      document.getElementById('sheet').classList.remove('open');
+      document.getElementById('overlay').classList.remove('on');
+      document.getElementById('titleInput').value = '';
+      setDefaultTime();
+    }
+
+    /* ────────────────────────────────────────────────────────
+       Save reminder
+    ──────────────────────────────────────────────────────── */
+    function saveReminder() {
+      const title = document.getElementById('titleInput').value.trim();
+      const time  = document.getElementById('timeInput').value;
+
+      if (!title) {
+        document.getElementById('titleInput').focus();
+        shakeInput('titleInput');
+        showToast('Add a title first');
+        return;
+      }
+      if (!time) {
+        showToast('Pick a time');
+        return;
+      }
+
+      reminders.push({
+        id:        String(Date.now()),
+        title,
+        time,
+        done:      false,
+        createdAt: new Date().toISOString(),
+      });
+
+      persist();
+      renderAll();
+      scheduleAll();
+      closeSheet();
+      showToast('✅ Reminder saved!');
+    }
+
+    function shakeInput(id) {
+      const el = document.getElementById(id);
+      el.style.borderColor = 'var(--danger)';
+      setTimeout(() => { el.style.borderColor = ''; }, 1400);
+    }
+
+    /* ────────────────────────────────────────────────────────
+       Actions
+    ──────────────────────────────────────────────────────── */
+    function toggleDone(id) {
+      const r = reminders.find(x => x.id === id);
+      if (!r) return;
+      r.done = !r.done;
+
+      if (r.done && scheduledIds[id]) {
+        clearTimeout(scheduledIds[id]);
+        delete scheduledIds[id];
+      } else if (!r.done) {
+        scheduleAll();
+      }
+
+      persist();
+      renderAll();
+      showToast(r.done ? '✅ Marked done!' : 'Moved back to pending');
+    }
+
+    function deleteReminder(id) {
+      if (scheduledIds[id]) {
+        clearTimeout(scheduledIds[id]);
+        delete scheduledIds[id];
+      }
+      reminders = reminders.filter(r => r.id !== id);
+      persist();
+      renderAll();
+      showToast('Reminder deleted');
+    }
+
+    /* ────────────────────────────────────────────────────────
+       Render
+    ──────────────────────────────────────────────────────── */
+    function renderAll() {
+      updateStats();
+      renderList();
+    }
+
+    function updateStats() {
+      const total   = reminders.length;
+      const done    = reminders.filter(r => r.done).length;
+      const pending = total - done;
+      document.getElementById('statTotal').textContent   = total;
+      document.getElementById('statPending').textContent = pending;
+      document.getElementById('statDone').textContent    = done;
+    }
+
+    function renderList() {
+      const el  = document.getElementById('reminderList');
+      const now = Date.now();
+
+      // Sort: pending asc time, then done asc time
+      const sorted = [...reminders].sort((a, b) => {
+        if (a.done !== b.done) return a.done ? 1 : -1;
+        return a.time.localeCompare(b.time);
+      });
+
+      if (!sorted.length) {
+        el.innerHTML = `
+          <div class="empty">
+            <div class="empty-emoji">📬</div>
+            <div class="empty-title">Your inbox is clear</div>
+            <div class="empty-sub">Tap the button below to<br>add your first reminder for today</div>
+          </div>`;
+        return;
+      }
+
+      const pending = sorted.filter(r => !r.done);
+      const done    = sorted.filter(r =>  r.done);
+      let html = '';
+
+      if (pending.length) {
+        html += `<div class="section-lbl">Today's Reminders</div>`;
+        pending.forEach(r => { html += cardHTML(r, now); });
+      }
+      if (done.length) {
+        html += `<div class="section-lbl">Completed</div>`;
+        done.forEach(r => { html += cardHTML(r, now); });
+      }
+
+      el.innerHTML = html;
+
+      // Bind events (event delegation would also work)
+      el.querySelectorAll('.check-btn').forEach(b =>
+        b.addEventListener('click', () => toggleDone(b.dataset.id))
+      );
+      el.querySelectorAll('.del-btn').forEach(b =>
+        b.addEventListener('click', () => deleteReminder(b.dataset.id))
+      );
+    }
+
+    function cardHTML(r, now) {
+      const late = !r.done && targetMs(r.time) < now;
+      const doneClass   = r.done ? 'done'   : '';
+      const overdueClass = late   ? 'overdue' : '';
+
+      return `
+        <div class="card ${doneClass} ${overdueClass}">
+          <button class="check-btn ${r.done ? 'on' : ''}" data-id="${r.id}" aria-label="Toggle done">
+            ${r.done
+              ? `<svg viewBox="0 0 24 24" fill="none" stroke-width="3.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                   <polyline points="20 6 9 17 4 12"/>
+                 </svg>`
+              : ''}
+          </button>
+
+          <div class="card-body">
+            <div class="card-title">${esc(r.title)}</div>
+            <div class="card-meta">
+              <span class="time-badge ${late ? 'late' : ''}">
+                ${late ? '⏰' : '🕐'} ${fmtTime(r.time)}
+              </span>
+              ${late ? '<span class="overdue-tag">Overdue</span>' : ''}
+            </div>
+          </div>
+
+          <button class="del-btn" data-id="${r.id}" aria-label="Delete reminder">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+              <path d="M10 11v6M14 11v6"/>
+              <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+            </svg>
+          </button>
+        </div>`;
+    }
+
+    /* ────────────────────────────────────────────────────────
+       Utilities
+    ──────────────────────────────────────────────────────── */
+    function persist() {
+      try { localStorage.setItem('di_reminders', JSON.stringify(reminders)); }
+      catch (_) { /* storage full / private mode */ }
+    }
+
+    function fmtTime(hhmm) {
+      const [h, m] = hhmm.split(':').map(Number);
+      const d = new Date();
+      d.setHours(h, m, 0, 0);
+      return d.toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit' });
+    }
+
+    function esc(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+              .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    let _toastTimer;
+    function showToast(msg, dur = 2600) {
+      const t = document.getElementById('toast');
+      clearTimeout(_toastTimer);
+      t.textContent = msg;
+      t.classList.add('on');
+      _toastTimer = setTimeout(() => t.classList.remove('on'), dur);
+    }
+  </script>
+</body>
+</html>
