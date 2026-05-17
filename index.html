@@ -18,7 +18,6 @@
       --purple:      #6C63FF;
       --purple-bg:   #F0EEFF;
       --bg:          #F8F8F8;
-      --card:        #FFFFFF;
       --text-1:      #1A1A2E;
       --text-2:      #9E9E9E;
       --success:     #4CAF50;
@@ -29,360 +28,223 @@
       --safe-top:    env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; }
-    body {
-      font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #1A1A2E;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      -webkit-font-smoothing: antialiased;
-    }
-    #app {
-      width: 100%;
-      max-width: 430px;
-      height: 100%;
-      background: var(--bg);
-      position: relative;
-      overflow: hidden;
-    }
-    .screen {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg);
-      transform: translateX(100%);
-      transition: transform .36s cubic-bezier(.4,0,.2,1);
-      will-change: transform;
-    }
-    .screen.active  { transform: translateX(0); }
-    .screen.leaving { transform: translateX(100%); }
-    #s-onboard { transform: translateX(0); }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;overflow:hidden;}
+    body{font-family:'Satoshi',-apple-system,BlinkMacSystemFont,sans-serif;background:#1A1A2E;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;}
+    #app{width:100%;max-width:430px;height:100%;background:var(--bg);position:relative;overflow:hidden;}
 
-    /* ONBOARDING */
-    #s-onboard {
-      align-items: center;
-      justify-content: flex-end;
-      padding: calc(var(--safe-top) + 20px) 32px calc(var(--safe-bottom) + 40px);
-    }
-    .onboard-inner {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-      justify-content: center;
-      padding-bottom: 24px;
-    }
-    .wave-wrap {
-      width: 96px; height: 96px;
-      background: white;
-      border-radius: 30px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 52px;
-      box-shadow: var(--sh-card);
-      margin-bottom: 36px;
-      animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(-10px); }
-    }
-    .onboard-h1 {
-      font-family: 'Clash Display', sans-serif;
-      font-size: 30px; font-weight: 700;
-      color: var(--text-1);
-      text-align: center;
-      margin-bottom: 8px; line-height: 1.2;
-    }
-    .onboard-sub {
-      font-size: 15px; color: var(--text-2);
-      text-align: center; margin-bottom: 40px; line-height: 1.5;
-    }
-    .name-input {
-      width: 100%; padding: 18px 20px;
-      border: 2px solid var(--border); border-radius: 18px;
-      font-family: 'Satoshi', sans-serif; font-size: 16px;
-      color: var(--text-1); background: white; outline: none;
-      transition: border-color .2s;
-      -webkit-appearance: none; appearance: none;
-    }
-    .name-input:focus        { border-color: var(--purple); }
-    .name-input::placeholder { color: var(--text-2); }
-    .btn-go {
-      width: 100%; padding: 20px;
-      background: var(--orange); color: white; border: none;
-      border-radius: 18px;
-      font-family: 'Clash Display', sans-serif; font-size: 17px; font-weight: 600;
-      cursor: pointer; box-shadow: var(--sh-fab);
-      transition: transform .15s, box-shadow .15s;
-      -webkit-tap-highlight-color: transparent; margin-top: 14px;
-    }
-    .btn-go:active { transform: scale(.98); box-shadow: 0 4px 14px var(--orange-glow); }
+    /* SCREENS */
+    .screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);transition:transform .36s cubic-bezier(.4,0,.2,1);will-change:transform;}
+    .screen.active{transform:translateX(0);}
+    .screen.leaving{transform:translateX(100%);}
+    #s-intro{transform:translateX(0);}
 
-    /* HOME */
-    #s-home { background: var(--bg); }
-    .home-header {
-      background: white;
-      padding: calc(var(--safe-top) + 20px) 22px 18px;
-      border-bottom: 1px solid #F0F0F0; flex-shrink: 0;
-    }
-    .inbox-label {
-      font-family: 'Clash Display', sans-serif;
-      font-size: 12px; font-weight: 600;
-      letter-spacing: 2.5px; text-transform: uppercase;
-      color: var(--purple); margin-bottom: 6px;
-    }
-    .greeting-text {
-      font-family: 'Clash Display', sans-serif;
-      font-size: 26px; font-weight: 700;
-      color: var(--text-1); line-height: 1.2;
-    }
-    .greeting-text .gname { color: var(--orange); }
-    .date-line { font-size: 13px; color: var(--text-2); margin-top: 4px; }
-    .count-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      background: var(--purple-bg); color: var(--purple);
-      font-size: 11px; font-weight: 700;
-      padding: 4px 10px; border-radius: 20px; margin-top: 10px;
-      font-family: 'Clash Display', sans-serif; letter-spacing: .5px;
-    }
-    .notif-bar {
-      display: none; align-items: center; gap: 10px;
-      padding: 10px 18px; font-size: 13px; font-weight: 600;
-      cursor: pointer; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
-    }
-    .notif-bar.show  { display: flex; }
-    .notif-bar.warn  { background: #FFF8E7; color: #B45309; }
-    .notif-bar.ok    { background: #ECFDF5; color: #065F46; cursor: default; }
-    .notif-bar.block { background: #FEF2F2; color: var(--danger); cursor: default; }
-    .ios-tip {
-      display: none; background: var(--purple-bg); color: var(--purple);
-      font-size: 12px; font-weight: 500; padding: 10px 18px; line-height: 1.5;
-    }
-    .ios-tip strong { font-weight: 700; }
-    .reminders-scroll {
-      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-      padding: 14px 16px calc(var(--safe-bottom) + 90px);
-    }
-    .reminders-scroll::-webkit-scrollbar { display: none; }
-    .reminders-scroll { scrollbar-width: none; }
-    .section-hd {
-      font-family: 'Clash Display', sans-serif;
-      font-size: 11px; font-weight: 600; letter-spacing: 1.8px;
-      text-transform: uppercase; color: var(--text-2); padding: 8px 2px 10px;
-    }
+    /* ── INTRO SCREEN ── */
+    #s-intro{align-items:center;justify-content:flex-end;padding:calc(var(--safe-top)+20px) 28px calc(var(--safe-bottom)+36px);}
+    .intro-inner{width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:16px;}
+    .intro-logo{width:80px;height:80px;background:white;border-radius:26px;display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:var(--sh-card);margin-bottom:24px;animation:float 3s ease-in-out infinite;}
+    @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+    .intro-title{font-family:'Clash Display',sans-serif;font-size:32px;font-weight:700;color:var(--text-1);text-align:center;margin-bottom:6px;}
+    .intro-title span{color:var(--orange);}
+    .intro-tag{font-size:15px;color:var(--text-2);text-align:center;margin-bottom:36px;line-height:1.5;}
+    .intro-cards{width:100%;display:flex;flex-direction:column;gap:12px;}
+    .intro-card{background:white;border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:var(--sh-card);}
+    .intro-ic{font-size:26px;flex-shrink:0;width:46px;height:46px;background:var(--bg);border-radius:13px;display:flex;align-items:center;justify-content:center;}
+    .intro-card-h{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:2px;}
+    .intro-card-s{font-size:12px;color:var(--text-2);line-height:1.4;}
+
+    /* ── NAME SCREEN ── */
+    #s-onboard{align-items:center;justify-content:flex-end;padding:calc(var(--safe-top)+20px) 32px calc(var(--safe-bottom)+40px);}
+    .onboard-inner{width:100%;display:flex;flex-direction:column;align-items:center;flex:1;justify-content:center;padding-bottom:24px;}
+    .wave-wrap{width:96px;height:96px;background:white;border-radius:30px;display:flex;align-items:center;justify-content:center;font-size:52px;box-shadow:var(--sh-card);margin-bottom:36px;animation:float 3s ease-in-out infinite;}
+    .onboard-h1{font-family:'Clash Display',sans-serif;font-size:28px;font-weight:700;color:var(--text-1);text-align:center;margin-bottom:8px;line-height:1.2;}
+    .onboard-sub{font-size:14px;color:var(--text-2);text-align:center;margin-bottom:36px;line-height:1.5;}
+    .name-input{width:100%;padding:18px 20px;border:2px solid var(--border);border-radius:18px;font-family:'Satoshi',sans-serif;font-size:16px;color:var(--text-1);background:white;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none;}
+    .name-input:focus{border-color:var(--purple);}
+    .name-input::placeholder{color:var(--text-2);}
+    .btn-go{width:100%;padding:20px;background:var(--orange);color:white;border:none;border-radius:18px;font-family:'Clash Display',sans-serif;font-size:17px;font-weight:600;cursor:pointer;box-shadow:var(--sh-fab);transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;margin-top:14px;}
+    .btn-go:active{transform:scale(.98);box-shadow:0 4px 14px var(--orange-glow);}
+
+    /* ── HOME ── */
+    #s-home{background:var(--bg);}
+    .home-header{background:white;padding:calc(var(--safe-top)+20px) 22px 18px;border-bottom:1px solid #F0F0F0;flex-shrink:0;}
+    .inbox-label{font-family:'Clash Display',sans-serif;font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--purple);margin-bottom:6px;}
+    .greeting-text{font-family:'Clash Display',sans-serif;font-size:26px;font-weight:700;color:var(--text-1);line-height:1.2;}
+    .greeting-text .gname{color:var(--orange);}
+    .date-line{font-size:13px;color:var(--text-2);margin-top:4px;}
+    .count-badge{display:inline-flex;align-items:center;gap:5px;background:var(--purple-bg);color:var(--purple);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:10px;font-family:'Clash Display',sans-serif;letter-spacing:.5px;}
+    .notif-bar{display:none;align-items:center;gap:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+    .notif-bar.show{display:flex;}
+    .notif-bar.warn{background:#FFF8E7;color:#B45309;}
+    .notif-bar.ok{background:#ECFDF5;color:#065F46;cursor:default;}
+    .notif-bar.block{background:#FEF2F2;color:var(--danger);cursor:default;}
+    .ios-tip{display:none;background:var(--purple-bg);color:var(--purple);font-size:12px;font-weight:500;padding:10px 18px;line-height:1.5;}
+    .ios-tip strong{font-weight:700;}
+    .reminders-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px calc(var(--safe-bottom)+90px);}
+    .reminders-scroll::-webkit-scrollbar{display:none;}
+    .reminders-scroll{scrollbar-width:none;}
+
+    /* Date group header */
+    .date-group-hd{display:flex;align-items:center;gap:10px;padding:14px 2px 10px;}
+    .date-group-hd:first-child{padding-top:4px;}
+    .dg-label{font-family:'Clash Display',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-2);white-space:nowrap;}
+    .dg-today{color:var(--purple);}
+    .dg-tomorrow{color:var(--orange);}
+    .dg-line{flex:1;height:1px;background:var(--border);}
+    .dg-count{font-size:10px;font-weight:700;color:var(--text-2);background:var(--border);padding:2px 7px;border-radius:10px;}
 
     /* CARD */
-    .r-card-wrap {
-      position: relative; margin-bottom: 10px;
-      border-radius: 18px; overflow: hidden;
-    }
-    .swipe-bg {
-      position: absolute; inset: 0;
-      background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
-      border-radius: 18px;
-      display: flex; align-items: center; padding-left: 20px;
-      opacity: 0;
-    }
-    .swipe-bg-icon { font-size: 26px; font-weight: 700; color: white; }
-    .r-card {
-      position: relative; background: white; border-radius: 18px;
-      padding: 16px; display: flex; align-items: center; gap: 14px;
-      box-shadow: var(--sh-card); cursor: pointer;
-      -webkit-tap-highlight-color: transparent; will-change: transform;
-      animation: slideUp .3s ease both;
-    }
-    @keyframes slideUp {
-      from { opacity:0; transform:translateY(12px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-    .bell-box {
-      width: 46px; height: 46px; background: var(--purple-bg);
-      border-radius: 14px; display: flex; align-items: center;
-      justify-content: center; font-size: 22px; flex-shrink: 0;
-    }
-    .bell-box.urgent   { background: #FFF3F0; }
-    .bell-box.done-box { background: #F0FFF4; }
-    .r-info { flex: 1; min-width: 0; }
-    .r-title {
-      font-family: 'Clash Display', sans-serif;
-      font-size: 15px; font-weight: 600; color: var(--text-1);
-      margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .r-title.done-text { text-decoration: line-through; color: var(--text-2); }
-    .r-time { font-size: 12px; color: var(--text-2); display: flex; align-items: center; gap: 5px; }
-    .t-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--purple); flex-shrink: 0; }
-    .t-dot.hot { background: var(--orange); }
-    .swipe-hint { font-size: 10px; font-weight: 600; color: var(--text-2); letter-spacing: .5px; margin-top: 2px; opacity: 0; }
-    .done-chip {
-      width: 30px; height: 30px; border-radius: 50%;
-      background: #F0FFF4; border: 2px solid var(--success);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; flex-shrink: 0;
-    }
+    .r-card-wrap{position:relative;margin-bottom:10px;border-radius:18px;overflow:hidden;}
+    .swipe-bg{position:absolute;inset:0;background:linear-gradient(90deg,#4CAF50 0%,#66BB6A 100%);border-radius:18px;display:flex;align-items:center;padding-left:20px;opacity:0;}
+    .swipe-bg-icon{font-size:26px;font-weight:700;color:white;}
+    .r-card{position:relative;background:white;border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;box-shadow:var(--sh-card);cursor:pointer;-webkit-tap-highlight-color:transparent;will-change:transform;animation:slideUp .3s ease both;}
+    @keyframes slideUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .bell-box{width:46px;height:46px;background:var(--purple-bg);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+    .bell-box.urgent{background:#FFF3F0;}
+    .bell-box.done-box{background:#F0FFF4;}
+    .bell-box.dump-box{background:#F5F5F5;}
+    .r-info{flex:1;min-width:0;}
+    .r-title{font-family:'Clash Display',sans-serif;font-size:15px;font-weight:600;color:var(--text-1);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .r-title.done-text{text-decoration:line-through;color:var(--text-2);}
+    .r-meta{font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:2px;}
+    .t-dot{width:5px;height:5px;border-radius:50%;background:var(--purple);flex-shrink:0;}
+    .t-dot.hot{background:var(--orange);}
+    .date-chip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:var(--purple-bg);color:var(--purple);}
+    .date-chip.tomorrow{background:#FFF3F0;color:var(--orange);}
+    .date-chip.future{background:#F5F5F5;color:var(--text-2);}
+    .carried-chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:#FFF8E7;color:#B45309;border:1px solid rgba(180,83,9,.15);}
+    .swipe-hint{font-size:10px;font-weight:600;color:var(--text-2);letter-spacing:.5px;margin-top:3px;opacity:0;}
+    .done-chip{width:30px;height:30px;border-radius:50%;background:#F0FFF4;border:2px solid var(--success);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
 
     /* EMPTY */
-    .empty-state {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; padding: 64px 32px 32px; text-align: center;
-    }
-    .empty-emoji { font-size: 52px; margin-bottom: 18px; }
-    .empty-title {
-      font-family: 'Clash Display', sans-serif;
-      font-size: 22px; font-weight: 700; color: var(--text-1); margin-bottom: 8px;
-    }
-    .empty-sub { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+    .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 32px 32px;text-align:center;}
+    .empty-emoji{font-size:52px;margin-bottom:18px;}
+    .empty-title{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;color:var(--text-1);margin-bottom:8px;}
+    .empty-sub{font-size:14px;color:var(--text-2);line-height:1.6;}
 
     /* FAB */
-    .fab {
-      position: absolute; bottom: calc(var(--safe-bottom) + 28px); right: 22px;
-      width: 58px; height: 58px; background: var(--orange);
-      border-radius: 18px; display: flex; align-items: center; justify-content: center;
-      font-size: 30px; color: white; font-weight: 300;
-      box-shadow: var(--sh-fab); cursor: pointer; z-index: 30;
-      -webkit-tap-highlight-color: transparent;
-      transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
-      line-height: 1; border: none;
-    }
-    .fab:active { transform: scale(.93) rotate(90deg); box-shadow: 0 4px 14px var(--orange-glow); }
+    .fab{position:absolute;bottom:calc(var(--safe-bottom)+28px);right:22px;width:58px;height:58px;background:var(--orange);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:30px;color:white;font-weight:300;box-shadow:var(--sh-fab);cursor:pointer;z-index:30;-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;line-height:1;border:none;}
+    .fab:active{transform:scale(.93) rotate(90deg);box-shadow:0 4px 14px var(--orange-glow);}
 
-    /* SHEET */
-    .sheet-overlay {
-      position: fixed; inset: 0;
-      background: rgba(26,26,46,.45);
-      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-      z-index: 100; opacity: 0; pointer-events: none; transition: opacity .3s;
-    }
-    .sheet-overlay.on { opacity: 1; pointer-events: all; }
-    .add-sheet {
-      position: fixed; bottom: 0; left: 50%;
-      transform: translateX(-50%) translateY(110%);
-      width: 100%; max-width: 430px;
-      background: white; border-radius: 28px 28px 0 0;
-      padding: 10px 24px calc(var(--safe-bottom) + 32px);
-      z-index: 101; transition: transform .4s cubic-bezier(.32,.72,0,1);
-      box-shadow: 0 -8px 40px rgba(0,0,0,.12);
-    }
-    .add-sheet.open { transform: translateX(-50%) translateY(0); }
-    .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
-    .sheet-h { font-family: 'Clash Display', sans-serif; font-size: 22px; font-weight: 700; color: var(--text-1); margin-bottom: 20px; }
-    .field-lbl { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-2); margin-bottom: 8px; }
-    .sheet-inp {
-      width: 100%; padding: 16px; border: 2px solid var(--border); border-radius: 14px;
-      font-family: 'Satoshi', sans-serif; font-size: 16px; color: var(--text-1);
-      background: var(--bg); outline: none; transition: border-color .2s, background .2s;
-      -webkit-appearance: none; appearance: none; resize: none; margin-bottom: 16px;
-    }
-    .sheet-inp:focus        { border-color: var(--purple); background: white; }
-    .sheet-inp::placeholder { color: var(--text-2); }
-    .when-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-    .when-pill {
-      background: var(--bg); border: 2px solid var(--border); border-radius: 14px;
-      padding: 13px 14px; display: flex; align-items: center; gap: 8px;
-      cursor: pointer; -webkit-tap-highlight-color: transparent;
-      transition: border-color .2s; position: relative;
-    }
-    .when-pill.active { border-color: var(--purple); background: white; }
-    .when-pill input[type="time"] {
-      position: absolute; opacity: 0; width: 100%; height: 100%;
-      top: 0; left: 0; cursor: pointer; font-size: 16px; border: none; background: transparent;
-    }
-    .pill-icon { font-size: 20px; }
-    .pill-lbl  { font-size: 10px; color: var(--text-2); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
-    .pill-val  { font-family: 'Clash Display', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-1); }
-    .btn-add {
-      width: 100%; padding: 19px; background: var(--orange); color: white; border: none;
-      border-radius: 16px; font-family: 'Clash Display', sans-serif; font-size: 16px; font-weight: 600;
-      cursor: pointer; box-shadow: 0 8px 24px var(--orange-glow);
-      -webkit-tap-highlight-color: transparent; transition: transform .15s, box-shadow .15s;
-    }
-    .btn-add:active { transform: scale(.98); box-shadow: 0 4px 14px var(--orange-glow); }
+    /* ADD SHEET */
+    .sheet-overlay{position:fixed;inset:0;background:rgba(26,26,46,.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .sheet-overlay.on{opacity:1;pointer-events:all;}
+    .add-sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(110%);width:100%;max-width:430px;background:white;border-radius:28px 28px 0 0;padding:10px 24px calc(var(--safe-bottom)+32px);z-index:101;transition:transform .4s cubic-bezier(.32,.72,0,1);box-shadow:0 -8px 40px rgba(0,0,0,.12);}
+    .add-sheet.open{transform:translateX(-50%) translateY(0);}
+    .sheet-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
+    .sheet-h{font-family:'Clash Display',sans-serif;font-size:22px;font-weight:700;color:var(--text-1);margin-bottom:4px;}
+    .sheet-sub{font-size:12px;color:var(--text-2);margin-bottom:16px;line-height:1.5;}
+    .sheet-inp{width:100%;padding:16px;border:2px solid var(--border);border-radius:14px;font-family:'Satoshi',sans-serif;font-size:16px;color:var(--text-1);background:var(--bg);outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none;appearance:none;resize:none;margin-bottom:10px;}
+    .sheet-inp:focus{border-color:var(--purple);background:white;}
+    .sheet-inp::placeholder{color:var(--text-2);}
+    .sheet-inp.parsed{border-color:var(--purple);background:white;}
+
+    /* PARSE CHIP */
+    .parse-chip{display:none;background:var(--purple-bg);border:1.5px solid rgba(108,99,255,.25);border-radius:14px;padding:13px 14px;margin-bottom:14px;gap:10px;align-items:flex-start;animation:chipIn .2s ease both;}
+    .parse-chip.show{display:flex;}
+    @keyframes chipIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+    .chip-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+    .chip-body{flex:1;min-width:0;}
+    .chip-lbl{font-size:10px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+    .chip-title{font-family:'Clash Display',sans-serif;font-size:14px;font-weight:600;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .chip-when{font-size:13px;color:var(--purple);font-weight:600;margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+    .chip-date-badge{font-size:11px;background:white;border:1.5px solid rgba(108,99,255,.3);border-radius:8px;padding:2px 8px;color:var(--purple);font-weight:700;}
+    .chip-edit{font-size:11px;color:var(--purple);font-weight:600;background:white;border:1.5px solid rgba(108,99,255,.3);border-radius:8px;padding:5px 10px;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;flex-shrink:0;align-self:center;position:relative;}
+    .chip-edit input[type="time"]{position:absolute;opacity:0;inset:0;cursor:pointer;font-size:16px;border:none;background:transparent;width:100%;height:100%;}
+
+    /* Manual pickers */
+    .sheet-sep{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .sep-line{flex:1;height:1px;background:var(--border);}
+    .sep-txt{font-size:11px;color:var(--text-2);font-weight:600;letter-spacing:.5px;white-space:nowrap;}
+    .manual-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+    .pick-pill{background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .2s;position:relative;}
+    .pick-pill.active{border-color:var(--purple);background:white;}
+    .pick-pill input{position:absolute;opacity:0;inset:0;cursor:pointer;font-size:16px;border:none;background:transparent;width:100%;height:100%;}
+    .pill-icon{font-size:20px;}
+    .pill-lbl{font-size:10px;color:var(--text-2);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+    .pill-val{font-family:'Clash Display',sans-serif;font-size:13px;font-weight:600;color:var(--text-1);}
+    .btn-add{width:100%;padding:19px;background:var(--orange);color:white;border:none;border-radius:16px;font-family:'Clash Display',sans-serif;font-size:16px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px var(--orange-glow);-webkit-tap-highlight-color:transparent;transition:transform .15s,box-shadow .15s;}
+    .btn-add:active{transform:scale(.98);box-shadow:0 4px 14px var(--orange-glow);}
 
     /* DETAIL */
-    #s-detail { background: var(--bg); }
-    .detail-header {
-      background: white; padding: calc(var(--safe-top) + 16px) 20px 14px;
-      display: flex; align-items: center; gap: 12px;
-      border-bottom: 1px solid #F0F0F0;
-    }
-    .back-btn {
-      width: 42px; height: 42px; background: var(--bg); border-radius: 13px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; cursor: pointer; border: none;
-      -webkit-tap-highlight-color: transparent; transition: background .15s; flex-shrink: 0;
-    }
-    .back-btn:active { background: var(--border); }
-    .detail-hdr-lbl { font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-2); letter-spacing: 1.5px; text-transform: uppercase; }
-    .detail-body { flex: 1; padding: 28px 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .detail-icon { width: 74px; height: 74px; background: var(--purple-bg); border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 38px; margin-bottom: 22px; }
-    .detail-title { font-family: 'Clash Display', sans-serif; font-size: 28px; font-weight: 700; color: var(--text-1); line-height: 1.25; margin-bottom: 20px; }
-    .detail-meta { display: flex; flex-direction: column; gap: 12px; }
-    .meta-row { display: flex; align-items: center; gap: 12px; }
-    .meta-ic { width: 38px; height: 38px; background: white; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: var(--sh-card); flex-shrink: 0; }
-    .meta-txt { font-size: 14px; color: var(--text-2); }
-    .meta-txt strong { color: var(--text-1); font-weight: 600; }
-    .detail-actions { padding: 0 24px calc(var(--safe-bottom) + 28px); display: flex; flex-direction: column; gap: 10px; }
-    .btn-done {
-      width: 100%; padding: 19px; background: var(--success); color: white; border: none;
-      border-radius: 16px; font-family: 'Clash Display', sans-serif; font-size: 16px; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-      box-shadow: 0 8px 24px rgba(76,175,80,.28); -webkit-tap-highlight-color: transparent; transition: transform .15s;
-    }
-    .btn-done:active { transform: scale(.98); }
-    .btn-del {
-      width: 100%; padding: 19px; background: white; color: var(--danger);
-      border: 2px solid #FFE8E8; border-radius: 16px;
-      font-family: 'Clash Display', sans-serif; font-size: 16px; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-      -webkit-tap-highlight-color: transparent; transition: background .15s, transform .15s;
-    }
-    .btn-del:active { background: #FFF5F5; transform: scale(.98); }
+    #s-detail{background:var(--bg);}
+    .detail-header{background:white;padding:calc(var(--safe-top)+16px) 20px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #F0F0F0;}
+    .back-btn{width:42px;height:42px;background:var(--bg);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;border:none;-webkit-tap-highlight-color:transparent;transition:background .15s;flex-shrink:0;}
+    .back-btn:active{background:var(--border);}
+    .detail-hdr-lbl{font-family:'Clash Display',sans-serif;font-size:13px;font-weight:600;color:var(--text-2);letter-spacing:1.5px;text-transform:uppercase;}
+    .detail-body{flex:1;padding:28px 24px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+    .detail-icon{width:74px;height:74px;background:var(--purple-bg);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:22px;}
+    .detail-icon.dump-icon{background:#F5F5F5;}
+    .detail-title{font-family:'Clash Display',sans-serif;font-size:28px;font-weight:700;color:var(--text-1);line-height:1.25;margin-bottom:20px;}
+    .detail-meta{display:flex;flex-direction:column;gap:12px;}
+    .meta-row{display:flex;align-items:center;gap:12px;}
+    .meta-ic{width:38px;height:38px;background:white;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--sh-card);flex-shrink:0;}
+    .meta-txt{font-size:14px;color:var(--text-2);}
+    .meta-txt strong{color:var(--text-1);font-weight:600;}
+    .detail-actions{padding:0 24px calc(var(--safe-bottom)+28px);display:flex;flex-direction:column;gap:10px;}
+    .btn-done{width:100%;padding:19px;background:var(--success);color:white;border:none;border-radius:16px;font-family:'Clash Display',sans-serif;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(76,175,80,.28);-webkit-tap-highlight-color:transparent;transition:transform .15s;}
+    .btn-done:active{transform:scale(.98);}
+    .btn-del{width:100%;padding:19px;background:white;color:var(--danger);border:2px solid #FFE8E8;border-radius:16px;font-family:'Clash Display',sans-serif;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-tap-highlight-color:transparent;transition:background .15s,transform .15s;}
+    .btn-del:active{background:#FFF5F5;transform:scale(.98);}
 
     /* TOAST */
-    #toast {
-      position: fixed; top: calc(var(--safe-top) + 60px); left: 50%;
-      transform: translateX(-50%) translateY(-10px);
-      background: rgba(26,26,46,.92); color: white;
-      padding: 12px 24px; border-radius: 100px;
-      font-size: 14px; font-weight: 600; font-family: 'Satoshi', sans-serif;
-      white-space: nowrap; z-index: 400; opacity: 0; pointer-events: none;
-      transition: opacity .25s, transform .25s;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    }
-    #toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast{position:fixed;top:calc(var(--safe-top)+60px);left:50%;transform:translateX(-50%) translateY(-10px);background:rgba(26,26,46,.92);color:white;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:600;font-family:'Satoshi',sans-serif;white-space:nowrap;z-index:400;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+    #toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 
     /* CHECK FLASH */
-    #check-flash {
-      position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-      font-size: 72px; pointer-events: none; z-index: 500; opacity: 0;
-    }
-    #check-flash.pop { animation: checkPop .6s ease both; }
-    @keyframes checkPop {
-      0%   { opacity: 0; transform: scale(.4); }
-      40%  { opacity: 1; transform: scale(1.2); }
-      70%  { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(1); }
-    }
+    #check-flash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-size:72px;pointer-events:none;z-index:500;opacity:0;}
+    #check-flash.pop{animation:checkPop .6s ease both;}
+    @keyframes checkPop{0%{opacity:0;transform:scale(.4);}40%{opacity:1;transform:scale(1.2);}70%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(1);}}
   </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- SCREEN 1: ONBOARDING -->
-  <div id="s-onboard" class="screen active">
+  <!-- SCREEN 0: INTRO -->
+  <div id="s-intro" class="screen">
+    <div class="intro-inner">
+      <div class="intro-logo">📬</div>
+      <h1 class="intro-title">Day<span>Inbox</span></h1>
+      <p class="intro-tag">Your brain dump for the day.</p>
+      <div class="intro-cards">
+        <div class="intro-card">
+          <div class="intro-ic">🧠</div>
+          <div>
+            <div class="intro-card-h">Dump anything</div>
+            <div class="intro-card-s">Thoughts, tasks, todos — no structure needed. Just type it out.</div>
+          </div>
+        </div>
+        <div class="intro-card">
+          <div class="intro-ic">⏰</div>
+          <div>
+            <div class="intro-card-h">Add a time, get reminded</div>
+            <div class="intro-card-s">Type "@9am" or "tomorrow" and we'll ping you right on time.</div>
+          </div>
+        </div>
+        <div class="intro-card">
+          <div class="intro-ic">✅</div>
+          <div>
+            <div class="intro-card-h">Fresh start every day</div>
+            <div class="intro-card-s">Clear your inbox, clear your head. Unfinished things carry over automatically.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-go" id="btn-intro">Get Started →</button>
+  </div>
+
+  <!-- SCREEN 1: NAME -->
+  <div id="s-onboard" class="screen">
     <div class="onboard-inner">
       <div class="wave-wrap">👋</div>
-      <h1 class="onboard-h1">What's your<br>name?</h1>
-      <p class="onboard-sub">We'd love to know what to call you.</p>
+      <h1 class="onboard-h1">Last thing —<br>what's your name?</h1>
+      <p class="onboard-sub">Just your first name. This inbox is yours alone.</p>
       <input id="name-inp" class="name-input" type="text"
              placeholder="Your first name"
              autocomplete="given-name" autocorrect="off"
              autocapitalize="words" spellcheck="false" maxlength="30" />
     </div>
-    <button class="btn-go" id="btn-go">Let's Go →</button>
+    <button class="btn-go" id="btn-go">Open My Inbox →</button>
   </div>
 
   <!-- SCREEN 2: HOME -->
@@ -391,24 +253,24 @@
       <div class="inbox-label">My Inbox</div>
       <div class="greeting-text" id="greeting">Good morning, <span class="gname">there</span> 👋</div>
       <div class="date-line" id="date-line"></div>
-      <div class="count-badge" id="count-badge">✦ 0 reminders today</div>
+      <div class="count-badge" id="count-badge">✦ 0 to do</div>
     </div>
     <div class="notif-bar warn" id="notif-bar">
       <span id="notif-icon">🔔</span>
-      <span id="notif-txt">Tap to enable reminder notifications</span>
+      <span id="notif-txt">Tap to enable notifications for timed reminders</span>
     </div>
     <div class="ios-tip" id="ios-tip">
       <strong>📱 iOS:</strong> Add to Home Screen for reliable notifications — Share → "Add to Home Screen"
     </div>
     <div class="reminders-scroll" id="reminder-list"></div>
-    <button class="fab" id="fab" aria-label="Add reminder">+</button>
+    <button class="fab" id="fab" aria-label="Add to inbox">+</button>
   </div>
 
   <!-- SCREEN 3: DETAIL -->
   <div id="s-detail" class="screen">
     <div class="detail-header">
       <button class="back-btn" id="back-btn">←</button>
-      <span class="detail-hdr-lbl">Reminder</span>
+      <span class="detail-hdr-lbl" id="detail-hdr-lbl">Inbox</span>
     </div>
     <div class="detail-body" id="detail-body"></div>
     <div class="detail-actions" id="detail-actions"></div>
@@ -418,25 +280,47 @@
   <div class="sheet-overlay" id="overlay"></div>
   <div class="add-sheet" id="add-sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-h">New Reminder ✨</div>
-    <div class="field-lbl">What do you need to do?</div>
+    <div class="sheet-h">What's on your mind? 💭</div>
+    <p class="sheet-sub">Dump a thought or set a reminder — <em>"Buy milk"</em> or <em>"Call mom @9am"</em></p>
+
     <textarea id="task-inp" class="sheet-inp" rows="2"
-              placeholder="e.g. Call the dentist…"
+              placeholder="e.g. Buy milk · Pick up laundry · Call mom @9am · Dentist next Friday"
               autocorrect="off" autocapitalize="sentences"
-              spellcheck="false" maxlength="120"></textarea>
-    <div class="field-lbl">When?</div>
-    <div class="when-row">
-      <div class="when-pill">
-        <span class="pill-icon">📅</span>
-        <div><div class="pill-lbl">Date</div><div class="pill-val">Today</div></div>
+              spellcheck="false" maxlength="140"></textarea>
+
+    <div class="parse-chip" id="parse-chip">
+      <div class="chip-icon">✨</div>
+      <div class="chip-body">
+        <div class="chip-lbl">Scheduled for</div>
+        <div class="chip-title" id="chip-title">—</div>
+        <div class="chip-when">
+          <span class="chip-date-badge" id="chip-date-badge">Today</span>
+          <span id="chip-time-txt">—</span>
+        </div>
       </div>
-      <div class="when-pill" id="time-pill">
+      <div class="chip-edit" id="chip-edit-time">
+        ⏰ Change
+        <input type="time" id="chip-time-inp" aria-label="Override time" />
+      </div>
+    </div>
+
+    <div class="sheet-sep" id="manual-sep">
+      <div class="sep-line"></div><div class="sep-txt">ADD A DATE OR TIME</div><div class="sep-line"></div>
+    </div>
+    <div class="manual-row" id="manual-row">
+      <div class="pick-pill" id="date-pill">
+        <span class="pill-icon">📅</span>
+        <div><div class="pill-lbl">Date</div><div class="pill-val" id="date-display">Today</div></div>
+        <input type="date" id="date-inp" aria-label="Pick date" />
+      </div>
+      <div class="pick-pill" id="time-pill">
         <span class="pill-icon">⏰</span>
-        <div><div class="pill-lbl">Time</div><div class="pill-val" id="time-display">Pick time</div></div>
+        <div><div class="pill-lbl">Time</div><div class="pill-val" id="time-display">Optional</div></div>
         <input type="time" id="time-inp" aria-label="Pick time" />
       </div>
     </div>
-    <button class="btn-add" id="btn-add">Add Reminder ✓</button>
+
+    <button class="btn-add" id="btn-add">Add to Inbox ✓</button>
   </div>
 
   <div id="toast"></div>
@@ -446,380 +330,589 @@
 <script>
 'use strict';
 
+/* ── STATE ──────────────────────────────────────── */
 let userName  = '';
 let reminders = [];
 let detailId  = null;
 const timers  = {};
+let nlParsed  = { title:'', time:'', date:'' };
 
+/* ── BOOT ───────────────────────────────────────── */
 (function init() {
   try {
     userName  = localStorage.getItem('di_name') || '';
     reminders = JSON.parse(localStorage.getItem('di_reminders') || '[]');
+    reminders.forEach(r => { if (!r.date) r.date = todayStr(); });
   } catch(_) {}
 
-  setDefaultTime();
+  document.getElementById('date-inp').value = todayStr();
 
-  if (userName) showHome(false);
+  // Returning user — skip both intro and name screens
+  if (userName) { showHome(false); }
+  else { document.getElementById('s-intro').classList.add('active'); }
 
+  document.getElementById('btn-intro').addEventListener('click', goToName);
   document.getElementById('btn-go').addEventListener('click', onGo);
-  document.getElementById('name-inp').addEventListener('keydown', e => { if (e.key === 'Enter') onGo(); });
+  document.getElementById('name-inp').addEventListener('keydown', e => { if(e.key==='Enter') onGo(); });
   document.getElementById('fab').addEventListener('click', openSheet);
   document.getElementById('overlay').addEventListener('click', closeSheet);
-  document.getElementById('btn-add').addEventListener('click', saveReminder);
   document.getElementById('back-btn').addEventListener('click', goHome);
   document.getElementById('notif-bar').addEventListener('click', requestNotif);
+  document.getElementById('btn-add').addEventListener('click', saveItem);
+  document.getElementById('task-inp').addEventListener('input', onNLInput);
+
+  document.getElementById('date-inp').addEventListener('change', e => {
+    const v = e.target.value;
+    document.getElementById('date-display').textContent = v ? friendlyDate(v) : 'Today';
+    document.getElementById('date-pill').classList.toggle('active', !!v && v !== todayStr());
+  });
+
   document.getElementById('time-inp').addEventListener('change', e => {
     const v = e.target.value;
-    document.getElementById('time-display').textContent = v ? fmtTime(v) : 'Pick time';
+    document.getElementById('time-display').textContent = v ? fmtTime(v) : 'Optional';
     document.getElementById('time-pill').classList.toggle('active', !!v);
+    if (v) { nlParsed.time = ''; hideParsedChip(); }
+  });
+
+  document.getElementById('chip-time-inp').addEventListener('change', e => {
+    const v = e.target.value; if (!v) return;
+    nlParsed.time = v;
+    document.getElementById('chip-time-txt').textContent = fmtTime(v);
   });
 
   let _lt = 0;
   document.addEventListener('touchend', e => {
-    const t = Date.now();
-    if (t - _lt < 280) e.preventDefault();
-    _lt = t;
-  }, { passive: false });
+    const t = Date.now(); if(t-_lt<280) e.preventDefault(); _lt=t;
+  }, {passive:false});
 
   setInterval(renderHome, 60000);
 })();
+
+/* ════════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════════ */
+function goToName() {
+  document.getElementById('s-intro').classList.remove('active');
+  document.getElementById('s-intro').classList.add('leaving');
+  setTimeout(() => document.getElementById('s-intro').classList.remove('leaving'), 380);
+  document.getElementById('s-onboard').classList.add('active');
+  setTimeout(() => document.getElementById('name-inp').focus(), 400);
+}
 
 function onGo() {
   const v = document.getElementById('name-inp').value.trim();
   if (!v) {
     const i = document.getElementById('name-inp');
-    i.style.borderColor = 'var(--orange)'; i.focus();
-    setTimeout(() => { i.style.borderColor = ''; }, 1500);
-    return;
+    i.style.borderColor='var(--orange)'; i.focus();
+    setTimeout(()=>{i.style.borderColor='';}, 1500); return;
   }
-  userName = v;
-  localStorage.setItem('di_name', userName);
+  userName = v; localStorage.setItem('di_name', userName);
+  document.getElementById('s-onboard').classList.remove('active');
   showHome(true);
 }
 
 function showHome(animate) {
-  const ob = document.getElementById('s-onboard');
   const hm = document.getElementById('s-home');
-  ob.classList.remove('active');
-  if (!animate) {
-    hm.style.transition = 'none';
-    hm.classList.add('active');
-    setTimeout(() => { hm.style.transition = ''; }, 50);
-  } else {
-    hm.classList.add('active');
-  }
-  renderHome();
-  scheduleAll();
-  checkNotif();
-  detectIOS();
+  if (!animate) { hm.style.transition='none'; hm.classList.add('active'); setTimeout(()=>{hm.style.transition='';},50); }
+  else hm.classList.add('active');
+  renderHome(); scheduleAll(); checkNotif(); detectIOS();
 }
 
 function showDetail(id) {
-  detailId = id;
-  renderDetail(id);
+  detailId = id; renderDetail(id);
   document.getElementById('s-detail').classList.add('active');
 }
 
 function goHome() {
   const d = document.getElementById('s-detail');
-  d.classList.remove('active');
-  d.classList.add('leaving');
-  setTimeout(() => d.classList.remove('leaving'), 380);
+  d.classList.remove('active'); d.classList.add('leaving');
+  setTimeout(()=>d.classList.remove('leaving'), 380);
   renderHome();
 }
 
-function renderHome() {
-  const h = new Date().getHours();
-  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-  document.getElementById('greeting').innerHTML =
-    `${greet}, <span class="gname">${esc(userName)}</span> 👋`;
-  document.getElementById('date-line').textContent =
-    new Date().toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric' });
-
-  const pCount = reminders.filter(r => !r.done).length;
-  document.getElementById('count-badge').textContent =
-    pCount === 0 ? '✦ All clear today' : `✦ ${pCount} reminder${pCount !== 1 ? 's' : ''} today`;
-
-  const list = document.getElementById('reminder-list');
-  const now  = Date.now();
-  const pr   = reminders.filter(r => !r.done).sort((a,b) => a.time.localeCompare(b.time));
-  const dr   = reminders.filter(r =>  r.done).sort((a,b) => a.time.localeCompare(b.time));
-
-  if (!reminders.length) {
-    list.innerHTML = `<div class="empty-state">
-      <div class="empty-emoji">📬</div>
-      <div class="empty-title">Your inbox is clear</div>
-      <div class="empty-sub">Tap the + button to drop<br>your first thought in.</div>
-    </div>`;
-    return;
-  }
-
-  if (!pr.length) {
-    list.innerHTML = `<div class="empty-state">
-      <div class="empty-emoji">🎉</div>
-      <div class="empty-title">You're clear for today.</div>
-      <div class="empty-sub">Everything's handled. Enjoy your day — you've earned it.</div>
-    </div>
-    ${dr.length ? '<div class="section-hd" style="padding:0 2px 10px">Completed</div>' + dr.map(r => cHTML(r, now)).join('') : ''}`;
-    bindCards();
-    return;
-  }
-
-  let html = `<div class="section-hd">Today · ${pr.length} reminder${pr.length !== 1 ? 's' : ''}</div>` + pr.map(r => cHTML(r, now)).join('');
-  if (dr.length) html += `<div class="section-hd" style="margin-top:8px">Completed</div>` + dr.map(r => cHTML(r, now)).join('');
-  list.innerHTML = html;
-  bindCards();
-}
-
-function cHTML(r, now) {
-  const late = !r.done && targetMs(r.time) < now;
-  const box  = r.done ? 'done-box' : late ? 'urgent' : '';
-  const ico  = r.done ? '✅' : '🔔';
-  return `<div class="r-card-wrap" data-id="${r.id}">
-    <div class="swipe-bg"><div class="swipe-bg-icon">✓</div></div>
-    <div class="r-card" data-id="${r.id}">
-      <div class="bell-box ${box}">${ico}</div>
-      <div class="r-info">
-        <div class="r-title ${r.done ? 'done-text' : ''}">${esc(r.title)}</div>
-        <div class="r-time"><span class="t-dot ${late ? 'hot' : ''}"></span>${fmtTime(r.time)}${r.done ? ' · Done' : late ? ' · Overdue' : ''}</div>
-        ${!r.done ? '<div class="swipe-hint">swipe right to complete</div>' : ''}
-      </div>
-      ${r.done ? '<div class="done-chip">✓</div>' : ''}
-    </div>
-  </div>`;
-}
-
-function bindCards() {
-  document.querySelectorAll('.r-card[data-id]').forEach(card => {
-    initCard(card, card.dataset.id);
-  });
-}
-
-function renderDetail(id) {
-  const r = reminders.find(x => x.id === id);
-  if (!r) return;
-  document.getElementById('detail-body').innerHTML = `
-    <div class="detail-icon">🔔</div>
-    <div class="detail-title">${esc(r.title)}</div>
-    <div class="detail-meta">
-      <div class="meta-row"><div class="meta-ic">📅</div><div class="meta-txt"><strong>${new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'})}</strong></div></div>
-      <div class="meta-row"><div class="meta-ic">⏰</div><div class="meta-txt"><strong>${fmtTime(r.time)}</strong>${!r.done ? ' · ' + timeUntil(r.time) : ' · Done'}</div></div>
-      <div class="meta-row"><div class="meta-ic">👤</div><div class="meta-txt">Private · <strong>${esc(userName)}'s inbox</strong></div></div>
-    </div>`;
-  document.getElementById('detail-actions').innerHTML = r.done
-    ? `<button class="btn-del" id="dbtn-del">🗑 &nbsp;Delete Reminder</button>`
-    : `<button class="btn-done" id="dbtn-done">✓ &nbsp;Mark as Done</button>
-       <button class="btn-del" id="dbtn-del">🗑 &nbsp;Delete Reminder</button>`;
-  const db = document.getElementById('dbtn-done');
-  if (db) db.addEventListener('click', () => { markDone(id); goHome(); flashCheck(); showToast("Done! You're crushing it 💪"); });
-  document.getElementById('dbtn-del').addEventListener('click', () => { deleteR(id); goHome(); showToast('Reminder removed'); });
-}
-
-/* SWIPE */
-function initCard(card, id) {
-  let sx = 0, sy = 0, axis = null, tracking = false;
-  card.addEventListener('touchstart', e => {
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
-    axis = null; tracking = true; card.style.transition = 'none';
-  }, { passive: true });
-  card.addEventListener('touchmove', e => {
-    if (!tracking) return;
-    const dx = e.touches[0].clientX - sx;
-    const dy = e.touches[0].clientY - sy;
-    if (!axis && (Math.abs(dx) > 7 || Math.abs(dy) > 7))
-      axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-    if (axis === 'x' && dx > 0) {
-      e.preventDefault();
-      card.style.transform = `translateX(${dx}px)`;
-      card.style.opacity   = Math.max(0.35, 1 - dx / 160);
-      const wrap = card.closest('.r-card-wrap');
-      if (wrap) { const bg = wrap.querySelector('.swipe-bg'); if (bg) bg.style.opacity = Math.min(1, dx / 55); }
-      const hint = card.querySelector('.swipe-hint');
-      if (hint) hint.style.opacity = Math.min(1, dx / 40);
-    }
-  }, { passive: false });
-  card.addEventListener('touchend', e => {
-    if (!tracking) return; tracking = false;
-    const dx = e.changedTouches[0].clientX - sx;
-    const dy = e.changedTouches[0].clientY - sy;
-    const tap = Math.abs(dx) < 10 && Math.abs(dy) < 10;
-    const wrap = card.closest('.r-card-wrap');
-    if (wrap) { const bg = wrap.querySelector('.swipe-bg'); if (bg) bg.style.opacity = 0; }
-    if (tap || axis !== 'x') {
-      card.style.transition = 'transform .2s, opacity .2s';
-      card.style.transform = ''; card.style.opacity = '1';
-      if (tap) showDetail(id);
-      return;
-    }
-    if (dx > 80) { completeAnim(card, wrap, id); }
-    else {
-      card.style.transition = 'transform .32s cubic-bezier(.34,1.56,.64,1), opacity .32s';
-      card.style.transform = 'translateX(0)'; card.style.opacity = '1';
-      setTimeout(() => { card.style.transition = ''; }, 340);
-    }
-    axis = null;
-  }, { passive: true });
-  card.addEventListener('touchcancel', () => {
-    tracking = false;
-    card.style.transition = 'transform .2s';
-    card.style.transform = ''; card.style.opacity = '1';
-  }, { passive: true });
-}
-
-function completeAnim(card, wrap, id) {
-  card.style.transition = 'transform .32s ease-in, opacity .32s ease-in';
-  card.style.transform = 'translateX(110%)'; card.style.opacity = '0';
-  flashCheck();
-  setTimeout(() => {
-    if (wrap) {
-      const h = wrap.offsetHeight;
-      wrap.style.maxHeight = h + 'px'; wrap.style.overflow = 'hidden';
-      wrap.style.transition = 'max-height .22s ease, margin-bottom .22s ease';
-      wrap.style.marginBottom = '10px';
-      requestAnimationFrame(() => { wrap.style.maxHeight = '0'; wrap.style.marginBottom = '0'; });
-    }
-    setTimeout(() => {
-      markDone(id);
-      if (wrap) wrap.remove();
-      const pCount = reminders.filter(r => !r.done).length;
-      document.getElementById('count-badge').textContent =
-        pCount === 0 ? '✦ All clear today' : `✦ ${pCount} reminder${pCount !== 1 ? 's' : ''} today`;
-      if (pCount === 0) setTimeout(renderHome, 100);
-      showToast("Done! You're crushing it 💪");
-    }, 230);
-  }, 320);
-}
-
-function flashCheck() {
-  const el = document.getElementById('check-flash');
-  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
-  setTimeout(() => el.classList.remove('pop'), 650);
-}
-
-/* SHEET */
 function openSheet() {
   document.getElementById('add-sheet').classList.add('open');
   document.getElementById('overlay').classList.add('on');
-  setTimeout(() => document.getElementById('task-inp').focus(), 380);
+  setTimeout(()=>document.getElementById('task-inp').focus(), 380);
 }
+
 function closeSheet() {
   document.getElementById('add-sheet').classList.remove('open');
   document.getElementById('overlay').classList.remove('on');
   document.getElementById('task-inp').value = '';
-  setDefaultTime();
+  document.getElementById('time-inp').value = '';
+  document.getElementById('date-inp').value = todayStr();
+  document.getElementById('time-display').textContent = 'Optional';
+  document.getElementById('date-display').textContent = 'Today';
+  document.getElementById('time-pill').classList.remove('active');
+  document.getElementById('date-pill').classList.remove('active');
+  nlParsed = {title:'',time:'',date:''};
+  hideParsedChip();
 }
-function saveReminder() {
-  const title = document.getElementById('task-inp').value.trim();
-  const time  = document.getElementById('time-inp').value;
-  if (!title) {
-    const i = document.getElementById('task-inp');
-    i.style.borderColor = 'var(--orange)'; i.focus();
-    setTimeout(() => { i.style.borderColor = ''; }, 1400);
-    showToast('Add a title first'); return;
+
+/* ════════════════════════════════════════════════
+   NL PARSER
+════════════════════════════════════════════════ */
+function parseNL(raw) {
+  let text = raw.trim(), title = text, time = '', date = '';
+
+  title = title.replace(
+    /^(remind me to|remind me|remember to|don'?t forget to|set (?:a )?reminder (?:for|to)|alert me to|notify me to)\s+/i, ''
+  );
+
+  if (/\bday after tomorrow\b/i.test(text)) {
+    date = offsetDate(2); title = title.replace(/\bday after tomorrow\b/i,'').trim();
+  } else if (/\btomorrow\b/i.test(text)) {
+    date = offsetDate(1); title = title.replace(/\btomorrow\b/i,'').trim();
+  } else {
+    const nextRe = /\bnext\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i;
+    const nextM  = text.match(nextRe);
+    if (nextM) { date = nextWeekday(nextM[1],true); title = title.replace(nextRe,'').trim(); }
+    else {
+      const dayRe = /\b(?:this\s+)?(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i;
+      const dayM  = text.match(dayRe);
+      if (dayM) { date = nextWeekday(dayM[1],false); title = title.replace(dayRe,'').trim(); }
+      else if (/\btoday\b/i.test(text)) { date = todayStr(); title = title.replace(/\btoday\b/i,'').trim(); }
+    }
   }
-  if (!time) { showToast('Pick a time'); return; }
-  const r = { id: String(Date.now()), title, time, done: false };
+  if (!date) date = todayStr();
+
+  const atRe = /@(\d{1,2})[:\.]?(\d{2})?\s*(am|pm)?/i;
+  const atM  = title.match(atRe)||text.match(atRe);
+  if (atM) { time = buildTime(atM[1],atM[2],atM[3]); title = title.replace(atRe,'').trim(); }
+
+  if (!time) {
+    const atWRe = /\bat\s+(\d{1,2})[:\.]?(\d{2})?\s*(am|pm)\b/i;
+    const atWM  = title.match(atWRe)||text.match(atWRe);
+    if (atWM) { time = buildTime(atWM[1],atWM[2],atWM[3]); title = title.replace(atWRe,'').trim(); }
+  }
+  if (!time) {
+    const stRe = /\b(\d{1,2}):(\d{2})\s*(am|pm)\b/i;
+    const stM  = title.match(stRe)||text.match(stRe);
+    if (stM) { time = buildTime(stM[1],stM[2],stM[3]); title = title.replace(stRe,'').trim(); }
+  }
+  if (!time) {
+    const inRe = /\bin\s+(\d+)\s*(min(?:ute)?s?|hr?s?|hour?s?)\b/i;
+    const inM  = title.match(inRe)||text.match(inRe);
+    if (inM) {
+      const n=parseInt(inM[1]),u=inM[2].toLowerCase(),d=new Date();
+      if(u.startsWith('h')) d.setHours(d.getHours()+n); else d.setMinutes(d.getMinutes()+n);
+      time=pad2(d.getHours())+':'+pad2(d.getMinutes()); date=toDateStr(d);
+      title=title.replace(inRe,'').trim();
+    }
+  }
+  if (!time) {
+    const slots=[
+      {re:/\bmidnight\b/i,hh:'00:00'},{re:/\bearly\s+morning\b/i,hh:'07:00'},
+      {re:/\bmorning\b/i,hh:'08:00'},{re:/\bnoon\b/i,hh:'12:00'},
+      {re:/\blunch\b/i,hh:'13:00'},{re:/\bafternoon\b/i,hh:'15:00'},
+      {re:/\bevening\b/i,hh:'18:00'},{re:/\btonight\b/i,hh:'20:00'},
+      {re:/\bnight\b/i,hh:'21:00'},
+    ];
+    for(const s of slots){if(s.re.test(text)){time=s.hh;title=title.replace(s.re,'').trim();break;}}
+  }
+
+  title = title.replace(/\s{2,}/g,' ').replace(/^[\s,·\-]+|[\s,·\-]+$/g,'').trim();
+  return { title: title||raw.trim(), time, date };
+}
+
+function buildTime(hStr,mStr,ampm){
+  let h=parseInt(hStr),m=mStr?parseInt(mStr):0;
+  if(ampm){const ap=ampm.toLowerCase();if(ap==='pm'&&h!==12)h+=12;if(ap==='am'&&h===12)h=0;}
+  else{if(h>=1&&h<=6)h+=12;}
+  return pad2(h%24)+':'+pad2(m);
+}
+
+function onNLInput(){
+  const raw=document.getElementById('task-inp').value;
+  const parsed=parseNL(raw);
+  if(parsed.time){
+    nlParsed=parsed;
+    document.getElementById('chip-title').textContent=parsed.title;
+    document.getElementById('chip-time-txt').textContent=fmtTime(parsed.time);
+    const badge=document.getElementById('chip-date-badge');
+    badge.textContent=friendlyDate(parsed.date);
+    badge.className='chip-date-badge '+dateBadgeClass(parsed.date);
+    document.getElementById('chip-time-inp').value=parsed.time;
+    document.getElementById('parse-chip').classList.add('show');
+    document.getElementById('task-inp').classList.add('parsed');
+    document.getElementById('manual-sep').style.display='none';
+    document.getElementById('manual-row').style.display='none';
+  } else {
+    nlParsed={title:'',time:'',date:''};
+    hideParsedChip();
+  }
+}
+
+function hideParsedChip(){
+  document.getElementById('parse-chip').classList.remove('show');
+  document.getElementById('task-inp').classList.remove('parsed');
+  document.getElementById('manual-sep').style.display='';
+  document.getElementById('manual-row').style.display='';
+}
+
+/* ════════════════════════════════════════════════
+   SAVE
+════════════════════════════════════════════════ */
+function saveItem(){
+  const raw=document.getElementById('task-inp').value.trim();
+  if(!raw){
+    const i=document.getElementById('task-inp');
+    i.style.borderColor='var(--orange)';i.focus();
+    setTimeout(()=>{i.style.borderColor='';},1400);
+    showToast("What's on your mind?"); return;
+  }
+  const parsed=nlParsed.time?nlParsed:parseNL(raw);
+  const title=parsed.title||raw;
+  const time=parsed.time||document.getElementById('time-inp').value||'';
+  const date=parsed.date||document.getElementById('date-inp').value||todayStr();
+  const r={id:String(Date.now()),title,time,date,done:false};
   reminders.push(r);
   persist();
-  scheduleOne(r);
+  if(time) scheduleOne(r);
   closeSheet();
   renderHome();
-  showToast('Reminder saved! ✅');
+  showToast(time?'Reminder set! ✅':'Added to inbox ✓');
 }
 
-/* ACTIONS */
-function markDone(id) {
-  const r = reminders.find(x => x.id === id);
-  if (!r) return;
-  r.done = true;
-  if (timers[id]) { clearTimeout(timers[id]); delete timers[id]; }
-  persist();
-}
-function deleteR(id) {
-  if (timers[id]) { clearTimeout(timers[id]); delete timers[id]; }
-  reminders = reminders.filter(r => r.id !== id);
-  persist();
+/* ════════════════════════════════════════════════
+   RENDER HOME
+   — Completed items from previous days: hidden (auto-archived)
+   — Pending items from previous days: rolled into today's group
+════════════════════════════════════════════════ */
+function renderHome(){
+  const h=new Date().getHours();
+  const greet=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('greeting').innerHTML=`${greet}, <span class="gname">${esc(userName)}</span> 👋`;
+  document.getElementById('date-line').textContent=
+    new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+
+  const allPending=reminders.filter(r=>!r.done);
+  document.getElementById('count-badge').textContent=
+    allPending.length===0?'✦ All clear':`✦ ${allPending.length} to do`;
+
+  const list=document.getElementById('reminder-list');
+  const nowMs=Date.now();
+  const today=todayStr();
+
+  // Pending: sorted by targetMs (timeless = Infinity, sorts to end)
+  const pending=allPending.slice().sort((a,b)=>targetMs(a)-targetMs(b));
+
+  // Done: only show TODAY's completed items — older ones auto-archived (hidden)
+  const done=reminders.filter(r=>r.done && r.date===today);
+
+  if(!reminders.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-emoji">📬</div>
+      <div class="empty-title">Your inbox is clear</div>
+      <div class="empty-sub">Tap + to dump a thought or set a reminder.<br>We'll handle the rest.</div></div>`;
+    return;
+  }
+
+  if(!pending.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-emoji">🎉</div>
+      <div class="empty-title">You're clear for today.</div>
+      <div class="empty-sub">Everything handled. You've earned it.</div></div>
+      ${done.length?'<div class="date-group-hd" style="margin-top:8px"><div class="dg-label">Completed today</div><div class="dg-line"></div></div>'+done.map(r=>cHTML(r,nowMs,false)).join(''):''}`;
+    bindCards(); return;
+  }
+
+  // Group pending by display date
+  // Items with date < today are rolled over → displayed under today
+  const groups={};
+  const rolledOverIds=new Set();
+
+  pending.forEach(r=>{
+    const displayDate=r.date<today?today:r.date;
+    if(r.date<today) rolledOverIds.add(r.id);
+    if(!groups[displayDate]) groups[displayDate]=[];
+    groups[displayDate].push(r);
+  });
+
+  let html='';
+  Object.keys(groups).sort().forEach(date=>{
+    const gLabel=friendlyDate(date);
+    const extraClass=date===today?'dg-today':date===offsetDate(1)?'dg-tomorrow':'';
+    // Count rolled-over separately for hint
+    const rolledInGroup=groups[date].filter(r=>rolledOverIds.has(r.id)).length;
+    const countHint=rolledInGroup>0?` +${rolledInGroup} carried`:'';
+    html+=`<div class="date-group-hd">
+      <div class="dg-label ${extraClass}">${gLabel}</div>
+      <div class="dg-line"></div>
+      <div class="dg-count">${groups[date].length}${countHint}</div>
+    </div>`;
+    html+=groups[date].map(r=>cHTML(r,nowMs,rolledOverIds.has(r.id))).join('');
+  });
+
+  if(done.length){
+    html+=`<div class="date-group-hd" style="margin-top:8px">
+      <div class="dg-label">Completed today</div><div class="dg-line"></div>
+    </div>`+done.map(r=>cHTML(r,nowMs,false)).join('');
+  }
+
+  list.innerHTML=html;
+  bindCards();
 }
 
-/* NOTIFICATIONS */
-function checkNotif() {
-  const bar = document.getElementById('notif-bar');
-  const icon = document.getElementById('notif-icon');
-  const txt  = document.getElementById('notif-txt');
-  if (!('Notification' in window)) {
-    bar.style.display = 'flex'; bar.className = 'notif-bar show block';
-    icon.textContent = '🚫'; txt.textContent = 'Notifications not supported in this browser'; return;
+function cHTML(r, nowMs, rolledOver){
+  const timed  = !!r.time;
+  const rMs    = timed?targetMs(r):Infinity;
+  const late   = timed&&!r.done&&rMs<nowMs;
+
+  let ico, boxClass;
+  if(r.done)      { ico='✅'; boxClass='done-box'; }
+  else if(!timed) { ico='📝'; boxClass='dump-box'; }
+  else if(late)   { ico='🔔'; boxClass='urgent'; }
+  else            { ico='🔔'; boxClass=''; }
+
+  // Meta row: time (if timed) + carried badge + date chip (future items)
+  const today=todayStr();
+  const isToday=(r.date||today)===today;
+  const isFuture=!rolledOver&&!isToday&&!r.done;
+
+  let metaParts=[];
+  if(timed){
+    metaParts.push(`<span class="t-dot ${late?'hot':''}"></span>`);
+    metaParts.push(fmtTime(r.time)+(r.done?' · Done':late?' · Overdue':''));
   }
-  if (Notification.permission === 'granted') {
-    bar.style.display = 'flex'; bar.className = 'notif-bar show ok';
-    icon.textContent = '✅'; txt.textContent = "Notifications enabled — you'll be reminded on time";
-  } else if (Notification.permission === 'denied') {
-    bar.style.display = 'flex'; bar.className = 'notif-bar show block';
-    icon.textContent = '🚫'; txt.textContent = 'Notifications blocked — enable in browser settings';
-  } else {
-    bar.style.display = 'flex'; bar.className = 'notif-bar show warn';
-    icon.textContent = '🔔'; txt.textContent = 'Tap to enable reminder notifications';
-  }
+  if(rolledOver) metaParts.push(`<span class="carried-chip">carried over</span>`);
+  if(isFuture)   metaParts.push(`<span class="date-chip ${dateBadgeClass(r.date)}">${friendlyDate(r.date)}</span>`);
+
+  const metaRow=metaParts.length
+    ?`<div class="r-meta">${metaParts.join('')}</div>`:'';
+
+  return `<div class="r-card-wrap" data-id="${r.id}">
+    <div class="swipe-bg"><div class="swipe-bg-icon">✓</div></div>
+    <div class="r-card" data-id="${r.id}">
+      <div class="bell-box ${boxClass}">${ico}</div>
+      <div class="r-info">
+        <div class="r-title ${r.done?'done-text':''}">${esc(r.title)}</div>
+        ${metaRow}
+        ${!r.done?'<div class="swipe-hint">swipe right to complete</div>':''}
+      </div>
+      ${r.done?'<div class="done-chip">✓</div>':''}
+    </div>
+  </div>`;
 }
-async function requestNotif() {
-  if (!('Notification' in window)) return;
-  if (Notification.permission === 'denied')  { showToast('Enable in browser settings'); return; }
-  if (Notification.permission === 'granted') { showToast('✅ Already enabled'); return; }
-  const p = await Notification.requestPermission();
-  checkNotif();
-  if (p === 'granted') { showToast('✅ Notifications enabled!'); scheduleAll(); }
+
+function bindCards(){
+  document.querySelectorAll('.r-card[data-id]').forEach(c=>initCard(c,c.dataset.id));
 }
-function pushNotif(title, time) {
-  if (Notification.permission !== 'granted') { showToast(`⏰ ${title}`); return; }
-  try {
-    const n = new Notification(`Hey — ${title}. You've got this. ✅`, {
-      body: `Scheduled for ${fmtTime(time)} · DayInbox`,
-      icon: 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#FF6B35"/><text y="70" x="50" text-anchor="middle" font-size="56" fill="white">📬</text></svg>'),
-      tag: 'di-' + Date.now(), requireInteraction: false,
+
+/* ════════════════════════════════════════════════
+   RENDER DETAIL
+════════════════════════════════════════════════ */
+function renderDetail(id){
+  const r=reminders.find(x=>x.id===id); if(!r) return;
+  const timed=!!r.time;
+  const date=r.date||todayStr();
+  const[yr,mo,dy]=date.split('-').map(Number);
+  const dObj=new Date(yr,mo-1,dy);
+  const dateStr=dObj.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  const rolledOver=!r.done&&r.date<todayStr();
+
+  document.getElementById('detail-hdr-lbl').textContent=timed?'Reminder':'Inbox';
+
+  const timeMetaRow=timed
+    ?`<div class="meta-row"><div class="meta-ic">⏰</div><div class="meta-txt"><strong>${fmtTime(r.time)}</strong>${!r.done?' · '+timeUntil(r):' · Done'}</div></div>`:'';
+  const carriedRow=rolledOver
+    ?`<div class="meta-row"><div class="meta-ic">↩️</div><div class="meta-txt">Carried over from <strong>${friendlyDate(date)}</strong></div></div>`:'';
+
+  document.getElementById('detail-body').innerHTML=`
+    <div class="detail-icon ${timed?'':'dump-icon'}">${timed?'🔔':'📝'}</div>
+    <div class="detail-title">${esc(r.title)}</div>
+    <div class="detail-meta">
+      <div class="meta-row"><div class="meta-ic">📅</div><div class="meta-txt"><strong>${dateStr}</strong>&nbsp;·&nbsp;${friendlyDate(date)}</div></div>
+      ${timeMetaRow}
+      ${carriedRow}
+      <div class="meta-row"><div class="meta-ic">👤</div><div class="meta-txt">Private · <strong>${esc(userName)}'s inbox</strong></div></div>
+    </div>`;
+
+  document.getElementById('detail-actions').innerHTML=r.done
+    ?`<button class="btn-del" id="dbtn-del">🗑 &nbsp;Delete</button>`
+    :`<button class="btn-done" id="dbtn-done">✓ &nbsp;Mark as Done</button>
+      <button class="btn-del"  id="dbtn-del">🗑 &nbsp;Delete</button>`;
+
+  const db=document.getElementById('dbtn-done');
+  if(db) db.addEventListener('click',()=>{markDone(id);goHome();flashCheck();showToast("Done! You're crushing it 💪");});
+  document.getElementById('dbtn-del').addEventListener('click',()=>{deleteR(id);goHome();showToast('Removed from inbox');});
+}
+
+/* ════════════════════════════════════════════════
+   SWIPE-TO-COMPLETE
+════════════════════════════════════════════════ */
+function initCard(card,id){
+  let sx=0,sy=0,axis=null,tracking=false;
+  card.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;axis=null;tracking=true;card.style.transition='none';},{passive:true});
+  card.addEventListener('touchmove',e=>{
+    if(!tracking) return;
+    const dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+    if(!axis&&(Math.abs(dx)>7||Math.abs(dy)>7)) axis=Math.abs(dx)>Math.abs(dy)?'x':'y';
+    if(axis==='x'&&dx>0){
+      e.preventDefault();
+      card.style.transform=`translateX(${dx}px)`;
+      card.style.opacity=Math.max(0.35,1-dx/160);
+      const bg=card.closest('.r-card-wrap')?.querySelector('.swipe-bg');
+      if(bg) bg.style.opacity=Math.min(1,dx/55);
+      const hint=card.querySelector('.swipe-hint');
+      if(hint) hint.style.opacity=Math.min(1,dx/40);
+    }
+  },{passive:false});
+  card.addEventListener('touchend',e=>{
+    if(!tracking) return; tracking=false;
+    const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+    const tap=Math.abs(dx)<10&&Math.abs(dy)<10;
+    const wrap=card.closest('.r-card-wrap');
+    const bg=wrap?.querySelector('.swipe-bg'); if(bg) bg.style.opacity=0;
+    if(tap||axis!=='x'){
+      card.style.transition='transform .2s,opacity .2s';
+      card.style.transform='';card.style.opacity='1';
+      if(tap) showDetail(id); return;
+    }
+    if(dx>80) completeAnim(card,wrap,id);
+    else{
+      card.style.transition='transform .32s cubic-bezier(.34,1.56,.64,1),opacity .32s';
+      card.style.transform='translateX(0)';card.style.opacity='1';
+      setTimeout(()=>{card.style.transition='';},340);
+    }
+    axis=null;
+  },{passive:true});
+  card.addEventListener('touchcancel',()=>{tracking=false;card.style.transition='transform .2s';card.style.transform='';card.style.opacity='1';},{passive:true});
+}
+
+function completeAnim(card,wrap,id){
+  card.style.transition='transform .32s ease-in,opacity .32s ease-in';
+  card.style.transform='translateX(110%)';card.style.opacity='0';
+  flashCheck();
+  setTimeout(()=>{
+    if(wrap){const h=wrap.offsetHeight;wrap.style.maxHeight=h+'px';wrap.style.overflow='hidden';wrap.style.transition='max-height .22s ease,margin-bottom .22s ease';requestAnimationFrame(()=>{wrap.style.maxHeight='0';wrap.style.marginBottom='0';});}
+    setTimeout(()=>{
+      markDone(id);if(wrap) wrap.remove();
+      const pc=reminders.filter(r=>!r.done).length;
+      document.getElementById('count-badge').textContent=pc===0?'✦ All clear':`✦ ${pc} to do`;
+      if(pc===0) setTimeout(renderHome,100);
+      showToast("Done! You're crushing it 💪");
+    },230);
+  },320);
+}
+
+function flashCheck(){
+  const el=document.getElementById('check-flash');
+  el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
+  setTimeout(()=>el.classList.remove('pop'),650);
+}
+
+/* ── ACTIONS ────────────────────────────────────── */
+function markDone(id){
+  const r=reminders.find(x=>x.id===id);if(!r) return;
+  r.done=true;r.date=todayStr(); // stamp completion to today for archive logic
+  if(timers[id]){clearTimeout(timers[id]);delete timers[id];}persist();
+}
+function deleteR(id){
+  if(timers[id]){clearTimeout(timers[id]);delete timers[id];}
+  reminders=reminders.filter(r=>r.id!==id);persist();
+}
+
+/* ── NOTIFICATIONS ──────────────────────────────── */
+function checkNotif(){
+  const bar=document.getElementById('notif-bar'),icon=document.getElementById('notif-icon'),txt=document.getElementById('notif-txt');
+  if(!('Notification' in window)){bar.style.display='flex';bar.className='notif-bar show block';icon.textContent='🚫';txt.textContent='Notifications not supported in this browser';return;}
+  if(Notification.permission==='granted'){bar.style.display='flex';bar.className='notif-bar show ok';icon.textContent='✅';txt.textContent="Notifications on — timed reminders will fire on time";}
+  else if(Notification.permission==='denied'){bar.style.display='flex';bar.className='notif-bar show block';icon.textContent='🚫';txt.textContent='Notifications blocked — enable in browser settings';}
+  else{bar.style.display='flex';bar.className='notif-bar show warn';icon.textContent='🔔';txt.textContent='Tap to enable notifications for timed reminders';}
+}
+async function requestNotif(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission==='denied'){showToast('Enable in browser settings');return;}
+  if(Notification.permission==='granted'){showToast('✅ Already enabled');return;}
+  const p=await Notification.requestPermission();checkNotif();
+  if(p==='granted'){showToast('✅ Notifications enabled!');scheduleAll();}
+}
+function pushNotif(r){
+  if(!r.time) return;
+  if(Notification.permission!=='granted'){showToast(`⏰ ${r.title}`);return;}
+  try{
+    const n=new Notification(`Hey — ${r.title}. You've got this. ✅`,{
+      body:`${fmtTime(r.time)} · ${friendlyDate(r.date||todayStr())} · DayInbox`,
+      icon:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#FF6B35"/><text y="70" x="50" text-anchor="middle" font-size="56" fill="white">📬</text></svg>'),
+      tag:'di-'+Date.now(),requireInteraction:false,
     });
-    setTimeout(() => n.close(), 7000);
-  } catch(_) { showToast(`⏰ ${title}`); }
+    setTimeout(()=>n.close(),7000);
+  }catch(_){showToast(`⏰ ${r.title}`);}
 }
-function scheduleAll() {
+function scheduleAll(){
   Object.values(timers).forEach(clearTimeout);
-  for (const k in timers) delete timers[k];
-  reminders.forEach(r => { if (!r.done) scheduleOne(r); });
+  for(const k in timers) delete timers[k];
+  reminders.forEach(r=>{if(!r.done&&r.time) scheduleOne(r);});
 }
-function scheduleOne(r) {
-  const ms = targetMs(r.time) - Date.now();
-  if (ms <= 0) return;
-  timers[r.id] = setTimeout(() => { pushNotif(r.title, r.time); renderHome(); }, ms);
+function scheduleOne(r){
+  if(!r.time) return;
+  const ms=targetMs(r)-Date.now(); if(ms<=0) return;
+  timers[r.id]=setTimeout(()=>{pushNotif(r);renderHome();},ms);
 }
-function detectIOS() {
-  const ios = /iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const sa  = window.matchMedia('(display-mode: standalone)').matches || !!window.navigator.standalone;
-  if (ios && !sa) document.getElementById('ios-tip').style.display = 'block';
+function detectIOS(){
+  const ios=/iP(hone|od|ad)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const sa=window.matchMedia('(display-mode: standalone)').matches||!!window.navigator.standalone;
+  if(ios&&!sa) document.getElementById('ios-tip').style.display='block';
 }
 
-/* UTILS */
-function persist() { try { localStorage.setItem('di_reminders', JSON.stringify(reminders)); } catch(_) {} }
-function targetMs(hhmm) { const [h,m] = hhmm.split(':').map(Number); const d = new Date(); d.setHours(h,m,0,0); return d.getTime(); }
-function fmtTime(hhmm) { const [h,m] = hhmm.split(':').map(Number); const d = new Date(); d.setHours(h,m,0,0); return d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); }
-function timeUntil(hhmm) {
-  const diff = targetMs(hhmm) - Date.now();
-  if (diff < 0) return 'Overdue';
-  const mins = Math.round(diff / 60000);
-  if (mins < 60) return `in ${mins} min`;
-  return `in ${Math.round(mins/60)} hr`;
+/* ── DATE / TIME UTILS ──────────────────────────── */
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
+function offsetDate(days){const d=new Date();d.setDate(d.getDate()+days);return toDateStr(d);}
+function toDateStr(d){return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());}
+function nextWeekday(name,forceNext){
+  const days=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+  const target=days.indexOf(name.toLowerCase());
+  const d=new Date();d.setHours(0,0,0,0);
+  const current=d.getDay();let diff=target-current;
+  if(forceNext){if(diff<=0)diff+=7;}else{if(diff<0)diff+=7;if(diff===0)diff=7;}
+  d.setDate(d.getDate()+diff);return toDateStr(d);
 }
-function setDefaultTime() {
-  const d = new Date(Date.now() + 30*60000);
-  const v = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-  document.getElementById('time-inp').value = v;
-  document.getElementById('time-display').textContent = fmtTime(v);
-  document.getElementById('time-pill').classList.add('active');
+function friendlyDate(dateStr){
+  if(!dateStr) return 'Today';
+  const today=todayStr(),tom=offsetDate(1);
+  if(dateStr===today) return 'Today';
+  if(dateStr===tom)   return 'Tomorrow';
+  const[yr,mo,dy]=dateStr.split('-').map(Number);
+  const d=new Date(yr,mo-1,dy);
+  const diffDays=Math.round((d-new Date(new Date().setHours(0,0,0,0)))/86400000);
+  if(diffDays<7) return d.toLocaleDateString(undefined,{weekday:'long'});
+  return d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
 }
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function dateBadgeClass(dateStr){
+  if(dateStr===todayStr())    return '';
+  if(dateStr===offsetDate(1)) return 'tomorrow';
+  return 'future';
+}
+function targetMs(r){
+  if(!r.time) return Infinity;
+  const date=r.date||todayStr();
+  const[yr,mo,dy]=date.split('-').map(Number);
+  const[h,m]=r.time.split(':').map(Number);
+  return new Date(yr,mo-1,dy,h,m,0,0).getTime();
+}
+function fmtTime(hhmm){
+  if(!hhmm) return '';
+  const[h,m]=hhmm.split(':').map(Number);const d=new Date();d.setHours(h,m,0,0);
+  return d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+}
+function timeUntil(r){
+  if(!r.time) return '';
+  const diff=targetMs(r)-Date.now();
+  if(diff<0) return 'Overdue';
+  const mins=Math.round(diff/60000);
+  if(mins<60) return`in ${mins} min`;
+  if(mins<1440) return`in ${Math.round(mins/60)} hr`;
+  const days=Math.round(mins/1440);
+  return`in ${days} day${days>1?'s':''}`;
+}
+function pad2(n){return String(n).padStart(2,'0');}
+function persist(){try{localStorage.setItem('di_reminders',JSON.stringify(reminders));}catch(_){}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 let _tt;
-function showToast(msg, dur=2800) {
-  const t = document.getElementById('toast'); clearTimeout(_tt);
-  t.textContent = msg; t.classList.add('on');
-  _tt = setTimeout(() => t.classList.remove('on'), dur);
+function showToast(msg,dur=2800){
+  const t=document.getElementById('toast');clearTimeout(_tt);
+  t.textContent=msg;t.classList.add('on');
+  _tt=setTimeout(()=>t.classList.remove('on'),dur);
 }
 </script>
 </body>
